@@ -1,43 +1,38 @@
-# Created by: Dede Brahma Arianto S.Kom., M.Kom
-
-# import library socket
 import socket
 
-# membuat fungsi server
-def server_program():
-    # menentukan alamat server
-    server_address = ('localhost', 4999)
-
-    # memanggil fungsi library socket
-    server_socket = socket.socket()
-
-    # binding ke alamat server
-    server_socket.bind(server_address)
-
-    # mengatur jumlah antrian koneksi dari client
-    server_socket.listen(2)
-
-    # menerima koneksi dari client
-    conn, address = server_socket.accept()
-    print("Connection from: " + str(address))
-
-    while True:
-        # menerima pesan dari client dengan batasan pesan maksimal 1024 bytes
-        data = conn.recv(1024).decode()
-        if not data:
-            # jika tidak ada pesan lakukan break
-            break
-        
-        # menampilkan pesan dari client
-        print("from connected user: " + str(data))
-
-        # merespon pesan dari client
-        data = input(' -> ')
-        conn.send(data.encode())
-
-    # menutup koneksi
-    conn.close()
-
-
 if __name__ == '__main__':
-    server_program()
+    host = '127.0.0.1'
+    port = 8080
+    totalclient = int(input('masukan nomor client: '))
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind((host, port))
+    sock.listen(totalclient)
+    
+    connections = []
+    print('Initiating clients')
+    for i in range(totalclient):
+        conn, addr = sock.accept()
+        connections.append((conn, addr))
+        print('Connected with client', i + 1)
+
+    fileno = 0
+    for conn, addr in connections:
+        idx = connections.index((conn, addr)) + 1
+        data = conn.recv(1024).decode()
+
+        if not data:
+            continue
+
+        filename = 'output' + str(fileno) + '.txt'
+        fileno += 1
+        with open(filename, "w") as fo:
+            while data:
+                fo.write(data)
+                data = conn.recv(1024).decode()
+
+        print('\nReceiving file from client', idx)
+        print('Received successfully! New filename is:', filename)
+
+    for conn, _ in connections:
+        conn.close()
