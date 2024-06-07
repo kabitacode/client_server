@@ -24,15 +24,16 @@ if __name__ == '__main__':
         if not data:
             continue
 
-        filename = 'output-file' + str(fileno) + '.txt'
+        filename = 'output-file-' + str(fileno) + '.txt'
         fileno += 1
         with open(filename, "w") as fo:
             while data:
                 fo.write(data)
                 data = conn.recv(1024).decode()
 
-        print('\nMenerima File dari client =>', idx)
-        print('File berhasil dikirim! nama file =>', filename)
+        print('\nMenerima File dari Client =>', idx)
+        print('File berhasil diterima!', filename)
+        print('Nama File =>', filename)
 
     for conn, _ in connections:
         conn.close()
