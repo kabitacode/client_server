@@ -2,19 +2,19 @@ import socket
 
 if __name__ == '__main__':
     host = '127.0.0.1'
-    port = 8080
-    totalclient = int(input('masukan nomor client: '))
+    port = 8101
+    totalclient = int(input('masukan nomor client => '))
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind((host, port))
     sock.listen(totalclient)
     
     connections = []
-    print('Initiating clients')
+    print('Loading.....')
     for i in range(totalclient):
         conn, addr = sock.accept()
         connections.append((conn, addr))
-        print('Connected with client', i + 1)
+        print('Koneksi dengan Client =>', i + 1)
 
     fileno = 0
     for conn, addr in connections:
@@ -24,15 +24,15 @@ if __name__ == '__main__':
         if not data:
             continue
 
-        filename = 'output' + str(fileno) + '.txt'
+        filename = 'output-file' + str(fileno) + '.txt'
         fileno += 1
         with open(filename, "w") as fo:
             while data:
                 fo.write(data)
                 data = conn.recv(1024).decode()
 
-        print('\nReceiving file from client', idx)
-        print('Received successfully! New filename is:', filename)
+        print('\nMenerima File dari client =>', idx)
+        print('File berhasil dikirim! nama file =>', filename)
 
     for conn, _ in connections:
         conn.close()
