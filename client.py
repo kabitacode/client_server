@@ -1,21 +1,22 @@
 import socket
 
+def send_file(filename, sock):
+    with open(filename, 'rb') as f:
+        while (data := f.read(1024)):
+            sock.sendall(data)
+    print('File berhasil dikirim!')
+
 if __name__ == '__main__':
     host = '127.0.0.1'
     port = 8101
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((host, port))
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((host, port))
 
-    filename = input('Input nama file : ')
+    filename = input('Input nama file: ')
     try:
-        with open(filename, "r") as fi:
-            data = fi.read()
-            while data:
-                sock.send(str(data).encode())
-                data = fi.read()
-            print('File berhasil dikirim!')
-    except IOError:
-        print('nama file salah!')
+        send_file(filename, client_socket)
+    except FileNotFoundError:
+        print('File tidak ditemukan!')
 
-    sock.close()
+    client_socket.close()

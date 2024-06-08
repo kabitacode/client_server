@@ -1,39 +1,28 @@
 import socket
 
+def receive_file(conn, addr):
+    filename = 'received_file.txt'
+    with open(filename, 'wb') as f:
+        while True:
+            data = conn.recv(1024)
+            if not data:
+                break
+            f.write(data)
+    print(f'File diterima from {addr}')
+    print(f'disimpan dengan nama {filename}')
+
 if __name__ == '__main__':
     host = '127.0.0.1'
     port = 8101
-    totalclient = int(input('masukan nomor client => '))
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind((host, port))
-    sock.listen(totalclient)
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((host, port))
+    server_socket.listen(1)
+    print('Loading...')
+
+    conn, addr = server_socket.accept()
+    print(f'koneksi oleh {addr}')
+    receive_file(conn, addr)
     
-    connections = []
-    print('Loading.....')
-    for i in range(totalclient):
-        conn, addr = sock.accept()
-        connections.append((conn, addr))
-        print('Koneksi dengan Client =>', i + 1)
-
-    fileno = 0
-    for conn, addr in connections:
-        index = connections.index((conn, addr)) + 1
-        data = conn.recv(1024).decode()
-
-        if not data:
-            continue
-
-        filename = 'output-file-' + str(fileno) + '.txt'
-        fileno += 1
-        with open(filename, "w") as fo:
-            while data:
-                fo.write(data)
-                data = conn.recv(1024).decode()
-
-        print('\nMenerima File dari Client =>', index)
-        print('File berhasil diterima!', filename)
-        print('Nama File =>', filename)
-
-    for conn, _ in connections:
-        conn.close()
+    conn.close()
+    server_socket.close()
