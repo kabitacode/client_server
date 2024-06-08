@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
     fileno = 0
     for conn, addr in connections:
-        idx = connections.index((conn, addr)) + 1
+        index = connections.index((conn, addr)) + 1
         data = conn.recv(1024).decode()
 
         if not data:
@@ -31,7 +31,7 @@ if __name__ == '__main__':
                 fo.write(data)
                 data = conn.recv(1024).decode()
 
-        print('\nMenerima File dari Client =>', idx)
+        print('\nMenerima File dari Client =>', index)
         print('File berhasil diterima!', filename)
         print('Nama File =>', filename)
 
